@@ -57,10 +57,12 @@ Open files in your local machine
 
 ## Libraries needed in R
 
-library(regclass)
-library(class)
+library(regclass),
+library(class),
 library(caret)
+
 library(e1071)
+
 library(tidyverse)
 library(funModeling)
 library(Hmisc)
