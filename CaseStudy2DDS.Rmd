@@ -1,0 +1,228 @@
+---
+title: "Attrition_Analysis"
+author: "Neddy Nyatome"
+date: "4/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+DDSAnalytics is an analytics company that specializes in talent management solutions for Fortune 100 companies. Talent management is defined as the iterative process of developing and retaining employees. It may include workforce planning, employee training programs, identifying high-potential employees and reducing/preventing voluntary employee turnover (attrition). To gain a competitive edge over its competition, DDSAnalytics is planning to leverage data science for talent management. The executive leadership has identified predicting employee turnover as its first application of data science for talent management. Before the business greenlights the project, they have tasked our data science team to conduct an analysis of existing employee data.
+
+A dataset was privided with the request to do an analysis to identify factors that lead to attrition.  Our team has focused on identifying 3 top three factors that contribute to turnover.
+
+Additionally, we have identified some interest job role trends specific to to the roles as the business was also interested in learning about any job role trends that may exist in the data set
+## Packages 
+```{r}
+library(regclass)
+library(class)
+library(caret)
+library(e1071)
+library(tidyverse)
+library(funModeling)
+library(Hmisc)
+library(dplyr)
+
+```
+
+## Data Import and Tidying 
+
+You can also embed plots, for example:
+
+```{r }
+employees <- read.csv('CaseStudy2-data.csv', header = T)
+head(employees)
+summary(employees)
+str(employees)
+#check if any column does have NAs
+colSums(is.na(employees))
+# convert some numeric variables to factors
+employees <- employees %>%
+  mutate(
+    JobLevel = factor(JobLevel),
+    StockOptionLevel = factor(StockOptionLevel),
+    TrainingTimesLastYear = factor(TrainingTimesLastYear)
+  )
+employee
+
+```
+
+##EDA 
+```{r}
+#basic EDA on all Employees
+#Compared outputs of all 3 and Identified factors that may lead to attrition to be 'YearsAtCompany', 'JobLevel' and 'Stock Option'
+basic_eda <- function(employees)
+{
+  glimpse(employees)
+  df_status(employees)
+  freq(employees)
+  profiling_num(employees)
+  plot_num(employees)
+  describe(employees)
+}
+  
+  basic_eda(employees)
+#Stats on Employees with Attrition = Yes 
+employees_attrition <- employees %>% filter(Attrition == 'Yes')
+# initial checkon each variable  
+plot_num(employees_attrition)
+basic_eda_attrition <- function(employees)
+{
+ glimpse(employees_attrition)
+  df_status(employees_attrition)
+  freq(employees_attrition)
+  profiling_num(employees_attrition)
+  plot_num(employees_attrition)
+  describe(employees-attrition)
+}
+
+basic_eda_attrition(employees)
+#Stats on Employees with Attrition = No  
+employees_stayed <- employees %>% filter(Attrition == 'No')
+plot_num(employees_stayed)
+basic_eda_stayed <- function(employees)
+{
+  glimpse(employees_stayed)
+  df_status(employees_stayed)
+  freq(employees_stayed)
+  profiling_num(employees_stayed)
+  plot_num(employees_stayed)
+  describe(employees_stayed)
+}
+
+basic_eda_stayed(employees)
+ 
+#Looking more into income 
+#Monthly Income Vs Years at company based on JobLevel 
+ggplot(employees, aes(MonthlyIncome, YearsAtCompany)) + geom_point(aes(color = JobRole)) + 
+  scale_x_continuous("MonthlyIncome", breaks = seq(0,20000,by = 2000))+
+  scale_y_continuous("YearsAtCompany", breaks = seq(0,270,by = 5))+
+  theme_bw() + labs(title="Scatterplot-Income vs Years at company")
+
+#Monthly Income Vs Years at company based on Attrition 
+ggplot(employees, aes(MonthlyIncome, YearsAtCompany)) + geom_point(aes(color = Attrition)) + 
+  scale_x_continuous("MonthlyIncome", breaks = seq(0,20000,by = 2000))+
+  scale_y_continuous("Years A tCompany", breaks = seq(0,270,by = 5))+
+  theme_bw() + labs(title="Attrition- Income vs Years at company")
+
+#Monthly Income Vs Years Since last promotion based on JobLevel 
+ggplot(employees, aes(MonthlyIncome, YearsSinceLastPromotion)) + geom_point(aes(color = Attrition)) + 
+  scale_x_continuous("MonthlyIncome", breaks = seq(0,20000,by = 2000))+
+  scale_y_continuous("Years Since LastPromotion", breaks = seq(0,270,by = 5))+
+  theme_bw() + labs(title="Attrition-Income vs Years Since Last Promotion")
+
+ggplot(employees, aes(MonthlyIncome, YearsSinceLastPromotion)) + geom_point(aes(color = StockOptionLevel)) + 
+  scale_x_continuous("MonthlyIncome", breaks = seq(0,20000,by = 2000))+
+  scale_y_continuous("Years Since LastPromotion", breaks = seq(0,270,by = 5))+
+  theme_bw() + labs(title="StockLevelOption-Income vs Years at company")
+
+#Experimentation on various vizualizations 
+employees %>% ggplot(aes(x = Age, y = YearsAtCompany,color = Attrition)) + geom_point()
+employees %>% ggplot(aes(x = YearsSinceLastPromotion, y = YearsAtCompany,color = Attrition)) + geom_point()
+employees %>% ggplot(aes(x =YearsInCurrentRole, y = YearsAtCompany,color = Attrition)) + geom_point()
+
+ggplot(attrition, aes(x=StockOptionLevel, fill = JobRole)) +
+  theme_bw()+
+  geom_histogram(binwidth = 5)
+employees %>% plot(x=Department, y= JobSatisfaction)
+employees %>% ggplot(aes(x = MonthlyIncome,y=JobRole, color = JobLevel)) + geom_point()
+employees %>% ggplot(aes(x = MonthlyIncome,y=PercentSalaryHike, color = JobLevel)) + geom_point()
+employees %>% ggplot(aes(x = MonthlyIncome,y=Attrition, color = YearsSinceLastPromotion)) + geom_point()
+employees %>% ggplot(aes(x = JobLevel, fill = factor(JobLevel))) + geom_bar(stat = "count") 
+employees %>% ggplot(aes(x = Gender, fill = factor(JobRole))) + geom_bar(stat = "count")
+employees %>% ggplot(aes(x = Gender, fill = factor(YearsSinceLastPromotion))) + geom_bar(stat = "count")
+#filtering and selecting 
+
+```
+
+## KNN Model - Using this model to predict attrition 
+```{r}
+#Normalize data
+num.vars <- sapply(employees, is.numeric)
+employees[num.vars] <- lapply(employees[num.vars], scale)
+
+
+#create training and test sets
+trainInd = sample(seq(1,30,1), .7*30)
+train = employees[trainInd,]
+test = employees[-trainInd,]
+
+#predict 
+set.seed(800) 
+test <- 1:500
+train.employees <- employees.subset[-test,]
+head(train.employees)
+test.employees <- employees.subset[test,]
+dim(train.employees)
+
+
+train.def <- employees$Attrition[-test]
+head(train.def)
+test.def <- as.factor(employees$Attrition[test])
+dim(train.def)
+
+#test performance 
+
+knn.1 <-  knn(train.employees, test.employees, train.def, k=2)
+table(knn.1 ,test.def)
+confusionMatrix(table(knn.1 ,test.def))
+
+```
+
+
+
+##Regression -> Using this model to predict Mothly income 
+```{r}
+#create the regression Model, Adding and removing predictors based on their significance 
+M <- lm(MonthlyIncome ~StockOptionLevel +
+          YearsInCurrentRole +
+          YearsSinceLastPromotion +
+          Gender+
+          JobRole +
+          TotalWorkingYears +
+          YearsWithCurrManager +
+          MonthlyRate +
+          JobLevel,
+          data=employees)
+summary(M)
+#Calculate the MSE 
+RSS <- c(crossprod(M$residuals))
+MSE <- RSS / length(M$residuals)
+RMSE <- sqrt(MSE)
+RMSE
+#Using the test file without Monthly Income 
+new_employees <- read.csv('test_employees.csv', header = T)
+new_employees <- new_employees %>%
+  mutate(
+    JobLevel = factor(JobLevel),
+    StockOptionLevel = factor(StockOptionLevel),
+    TrainingTimesLastYear = factor(TrainingTimesLastYear)
+  )
+new_employees
+#predict
+pred_M <- predict(M, newdata = new_employees)
+head(pred_M)
+#Calculate RMSE for the predicted 
+RSS <- c(crossprod(M$residuals))
+MSE <- RSS / length(M$residuals)
+RMSE <- sqrt(MSE)
+RMSE
+
+#Write to CSV 
+
+Monthly_income_output <- write.csv(pred_M, file = "Monthly Income prediction.csv")
+Monthly_income_output
+
+
+```
+
+
+
+
+
+```{r}
+
+```
