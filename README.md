@@ -11,9 +11,9 @@
 
 DDSAnalytics is an analytics company that specializes in talent management solutions for Fortune 100 companies. Talent management is defined as the iterative process of developing and retaining employees. It may include workforce planning, employee training programs, identifying high-potential employees and reducing/preventing voluntary employee turnover (attrition). To gain a competitive edge over its competition, DDSAnalytics is planning to leverage data science for talent management. The executive leadership has identified predicting employee turnover as its first application of data science for talent management. Before the business greenlights the project, they have tasked our data science team to conduct an analysis of existing employee data.
 
-A dataset was privided with the request to do an analysis to identify factors that lead to attrition.  Our team has focused on identifying 3 top three factors that contribute to turnover.
+A dataset was provided with the request to do an analysis and identify factors that lead to attrition.  I have focused on identifying 3 top three factors that contribute to turnover.
 
-Additionally, we have identified some interest job role trends specific to to the roles as the business was also interested in learning about any job role trends that may exist in the data set
+Additionally, I identified some interesting trends specific to job roles since the business wanted to learn about any job role trends that may exist in the data set
 
 
 ## Data Sets 
@@ -23,13 +23,13 @@ CaseStudy2-data
 
 
 ## Introduction/Getting Started
-The main focus of this analysis was understanding all the data elements and identifying the various patterns within them while focusing on the factors that lead to attrition. 
+The main focus of this analysis was understanding all the data elements in the dataset, identifying the various patterns within them, and creating predictive models for Attrition and Monthly Income for employees.  
 
-A model was created for predicting the likelihood of an employee leaving using the KNN model 
+Using the KNN model, a predictive model was created to predict the likelihood of an employee leaving 
 
-Monthly income was also analyzed and regression model was used to predict employees income 
+Monthly income was also analyzed and a regression model was used to predict employees income 
 
-These instructions below will get you a copy of the project up and running on your local machine for development and testing purposes. 
+Instructions below will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 ### Prerequisites
 
